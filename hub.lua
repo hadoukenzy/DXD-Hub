@@ -127,4 +127,44 @@ local function LoadModule(url)
         else
             Rayfield:Notify({
                 Title = "Script Error",
-                Content = "Failed to compile module: "
+                Content = "Failed to compile module: " .. err,
+                Duration = 5
+            })
+        end
+    else
+        Rayfield:Notify({
+            Title = "Download Error",
+            Content = "Failed to download module: " .. content,
+            Duration = 5
+        })
+    end
+    return false
+end
+
+-- Load current module
+LoadModule(modURL)
+
+-- Version check
+local successVer, latestVer = pcall(function()
+    return game:HttpGet(VersionURL, true)
+end)
+if successVer and latestVer and latestVer:gsub("%s+", "") ~= version then
+    Rayfield:Notify({
+        Title = "Update Available",
+        Content = "New version " .. latestVer .. " is available! Please restart the loader.",
+        Duration = 8
+    })
+end
+
+-- Info tab
+local InfoTab = Window:CreateTab("ℹ️ Info")
+
+InfoTab:CreateLabel("Your current Game: " .. gameName)
+InfoTab:CreateLabel("Script developers: enzy & dxrling")
+
+InfoTab:CreateButton({
+    Name = "Re-inject Current Module",
+    Callback = function()
+        LoadModule(modURL)
+    end
+})
