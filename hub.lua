@@ -8,13 +8,13 @@ local gotKey = false
 
 -- Fetch key
 local success, response = pcall(function()
-    return game:HttpGet(correctKeyURL, true)
+    return game:HttpGet(correctKeyURL)
 end)
 
 if success and response then
     correctKey = response:match("^%s*(.-)%s*$")
 else
-    warn("Failed to fetch key from GitHub: " .. tostring(response))
+    warn("Failed to fetch key from GitHub")
 end
 
 -- Load Rayfield
@@ -49,7 +49,14 @@ KeyTab:CreateInput({
             })
             task.wait(1.5)
             -- Remove key tab from UI
+            KeyTab.TabFrame:Destroy()
             KeyTab:Destroy()
+            for i, v in pairs(Window.Tabs) do
+                if v == KeyTab then
+                    table.remove(Window.Tabs, i)
+                    break
+                end
+            end
         else
             Rayfield:Notify({
                 Title = "Invalid Key",
@@ -75,27 +82,27 @@ KeyTab:CreateButton({
 -- Wait until correct key is entered
 repeat task.wait() until gotKey
 
--- ✅ 1. Game module config (UPDATED with jsDelivr URLs for better reliability)
+-- ✅ 1. Game module config (CORRECTED PlaceIds & URLs)
 local Modules = {
-    [2753915549] = "https://cdn.jsdelivr.net/gh/hadoukenzy/DXD-Hub@main/scripts/blox_fruits.lua", -- Blox Fruits
-    [142823291] = "https://cdn.jsdelivr.net/gh/hadoukenzy/DXD-Hub@main/scripts/murder_mystery.lua", -- Murder Mystery 2
-    [5985232436] = "https://cdn.jsdelivr.net/gh/hadoukenzy/DXD-Hub@main/scripts/grow_a_garden.lua", -- Grow a Garden!
-    [6186867282] = "https://cdn.jsdelivr.net/gh/hadoukenzy/DXD-Hub@main/scripts/ink_game.lua", -- The Ink Game
-    [9872472334] = "https://cdn.jsdelivr.net/gh/hadoukenzy/DXD-Hub@main/scripts/steal_a_brainrot.lua" -- Steal a Brainrot
+    [2753915549] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/blox_fruits.lua", -- Blox Fruits
+    [142823291] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/murder_mystery.lua", -- Murder Mystery 2
+    [5985232436] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/grow_a_garden.lua", -- Grow a Garden!
+    [6186867282] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/ink_game.lua", -- The Ink Game
+    [9872472334] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_brainrot.lua" -- Steal a Brainrot
 }
 
--- fallback module with jsDelivr
-local UniversalModule = "https://cdn.jsdelivr.net/gh/hadoukenzy/DXD-Hub@main/scripts/universal.lua"
+-- fallback module
+local UniversalModule = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/universal.lua"
 
 -- versioning
 local version = "1.3.7"
-local VersionURL = "https://cdn.jsdelivr.net/gh/hadoukenzy/DXD-Hub@main/version.txt"
+local VersionURL = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/version.txt"
 
 -- Detect current game
 local id = game.PlaceId
 local modURL = Modules[id] or UniversalModule
 
--- Get game name with better error handling
+-- Get game name
 local gameName = "Unknown Game"
 local successInfo, info = pcall(function()
     return game:GetService("MarketplaceService"):GetProductInfo(id)
@@ -106,116 +113,59 @@ end
 
 Rayfield:Notify({
     Title = "Game Detected",
-    Content = "Your game is: " .. gameName .. " (PlaceId: " .. id .. ")",
+    Content = "Your game is: " .. gameName .. ". Loading appropriate script...",
     Duration = 6
 })
 
--- Improved module loader with better error reporting
+-- Module loader
 local function LoadModule(url)
-    Rayfield:Notify({
-        Title = "Loading Module",
-        Content = "Attempting to load from: " .. url,
-        Duration = 4
-    })
-    
-    local success, content = pcall(function()
-        return game:HttpGet(url, true)
-    end)
-    
-    if not success then
+    local success, content = pcall(game.HttpGet, game, url, true)
+    if success then
+        local fn, err = loadstring(content)
+        if fn then
+            pcall(fn, Window)
+            return true
+        else
+            Rayfield:Notify({
+                Title = "Script Error",
+                Content = "Failed to compile module: " .. err,
+                Duration = 5
+            })
+        end
+    else
         Rayfield:Notify({
-            Title = "HTTP Error",
+            Title = "Download Error",
             Content = "Failed to download module: " .. content,
-            Duration = 6
+            Duration = 5
         })
-        return false
     end
-    
-    local fn, err = loadstring(content)
-    if not fn then
-        Rayfield:Notify({
-            Title = "Compilation Error",
-            Content = "Failed to compile module: " .. tostring(err),
-            Duration = 6
-        })
-        return false
-    end
-    
-    local execSuccess, execErr = pcall(fn, Window)
-    if not execSuccess then
-        Rayfield:Notify({
-            Title = "Execution Error",
-            Content = "Module failed to execute: " .. tostring(execErr),
-            Duration = 6
-        })
-        return false
-    end
-    
-    return true
+    return false
 end
 
--- Attempt to load current module with retry logic
-local loaded = false
-for i = 1, 3 do -- Try 3 times
-    if LoadModule(modURL) then
-        loaded = true
-        break
-    end
-    task.wait(2) -- Wait 2 seconds before retry
-end
+-- Load current module
+LoadModule(modURL)
 
-if not loaded then
-    Rayfield:Notify({
-        Title = "Critical Error",
-        Content = "Failed to load module after 3 attempts",
-        Duration = 8
-    })
-end
-
--- Version check with improved handling
+-- Version check
 local successVer, latestVer = pcall(function()
-    return game:HttpGet(VersionURL, true):gsub("%s+", "")
+    return game:HttpGet(VersionURL, true)
 end)
-
-if successVer and latestVer then
-    if latestVer ~= version then
-        Rayfield:Notify({
-            Title = "Update Available",
-            Content = "New version " .. latestVer .. " is available! (Current: " .. version .. ")",
-            Duration = 8
-        })
-    end
-else
+if successVer and latestVer and latestVer:gsub("%s+", "") ~= version then
     Rayfield:Notify({
-        Title = "Version Check Failed",
-        Content = "Could not check for updates: " .. tostring(latestVer),
-        Duration = 6
+        Title = "Update Available",
+        Content = "New version " .. latestVer .. " is available! Please restart the loader.",
+        Duration = 8
     })
 end
 
 -- Info tab
 local InfoTab = Window:CreateTab("ℹ️ Info")
 
-InfoTab:CreateLabel("Current Game: " .. gameName)
-InfoTab:CreateLabel("Place ID: " .. tostring(id))
-InfoTab:CreateLabel("Script Version: " .. version)
-InfoTab:CreateLabel("Developers: enzy & dxrling")
+InfoTab:CreateLabel("Your current Game: " .. gameName)
+InfoTab:CreateLabel("Script developers: enzy & dxrling")
 
 InfoTab:CreateButton({
     Name = "Re-inject Current Module",
     Callback = function()
         LoadModule(modURL)
-    end
-})
-
-InfoTab:CreateButton({
-    Name = "Copy Game ID",
-    Callback = function()
-        setclipboard(tostring(id))
-        Rayfield:Notify({
-            Title = "Copied",
-            Content = "Game ID copied to clipboard",
-            Duration = 2
-        })
     end
 })
