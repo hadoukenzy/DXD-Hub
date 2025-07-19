@@ -82,19 +82,19 @@ KeyTab:CreateButton({
 -- Wait until correct key is entered
 repeat task.wait() until gotKey
 
--- 1. Game module config (from GitHub repo)
+-- ✅ 1. Game module config (CORRECTED PlaceIds & URLs)
 local Modules = {
     [2753915549] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/blox_fruits.lua", -- Blox Fruits
-    [1537690962] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/murder_mystery.lua", -- Murder Mystery 2
-    [126884695634066] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/grow_a_garden.lua", -- Grow A Garden!
-    [125009265613167] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/ink_game.lua", -- Ink Game
-    [109983668079237] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_brainrot.lua" -- Steal a Brainrot
+    [142823291] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/murder_mystery.lua", -- Murder Mystery 2
+    [5985232436] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/grow_a_garden.lua", -- Grow a Garden!
+    [6186867282] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/ink_game.lua", -- The Ink Game
+    [9872472334] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_brainrot.lua" -- Steal a Brainrot
 }
 
--- universal fallback (если игра не найдена)
+-- fallback module
 local UniversalModule = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/universal.lua"
 
--- версия хаба
+-- versioning
 local version = "1.3.7"
 local VersionURL = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/version.txt"
 
@@ -102,7 +102,7 @@ local VersionURL = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/ve
 local id = game.PlaceId
 local modURL = Modules[id] or UniversalModule
 
--- Получение названия игры
+-- Get game name
 local gameName = "Unknown Game"
 local successInfo, info = pcall(function()
     return game:GetService("MarketplaceService"):GetProductInfo(id)
@@ -117,7 +117,7 @@ Rayfield:Notify({
     Duration = 6
 })
 
--- Модульный загрузчик
+-- Module loader
 local function LoadModule(url)
     local success, content = pcall(game.HttpGet, game, url, true)
     if success then
@@ -142,10 +142,10 @@ local function LoadModule(url)
     return false
 end
 
--- Загрузка текущего модуля
+-- Load current module
 LoadModule(modURL)
 
--- Проверка на обновление
+-- Version check
 local successVer, latestVer = pcall(function()
     return game:HttpGet(VersionURL, true)
 end)
@@ -157,7 +157,7 @@ if successVer and latestVer and latestVer:gsub("%s+", "") ~= version then
     })
 end
 
--- Финальная вкладка с информацией
+-- Info tab
 local InfoTab = Window:CreateTab("ℹ️ Info")
 
 InfoTab:CreateLabel("Your current Game: " .. gameName)
