@@ -175,3 +175,36 @@ InfoTab:CreateButton({
         LoadModule(modURL)
     end
 })
+
+-- Supported games list
+InfoTab:CreateLabel("🎮 Supported Games:")
+
+-- Emoji map
+local emojiMap = {
+    ["blox fruits"] = "🍏",
+    ["murder mystery"] = "🔪",
+    ["grow a garden"] = "🌸",
+    ["ink game"] = "🖋️",
+    ["steal a brainrot"] = "🧠",
+    ["steal a baddie"] = "💃",
+    ["99 nights in forest"] = "🌲",
+    ["brookhaven"] = "🏡",
+    ["strongman simulator"] = "💪",
+    ["work at a pizza place"] = "🍕"
+}
+
+-- Helper to format name
+local function prettifyNameFromURL(url)
+    local name = url:match(".+/([%w_]+)%.lua$")
+    local readable = name:gsub("_", " ")
+    local formatted = readable:gsub("(%a)([%w]*)", function(a, b) return a:upper() .. b:lower() end)
+    local lowercase = readable:lower()
+    local emoji = emojiMap[lowercase] or "🎲"
+    return emoji .. " " .. formatted
+end
+
+-- Loop and list games
+for _, url in pairs(Modules) do
+    local gameLabel = prettifyNameFromURL(url)
+    InfoTab:CreateLabel("- " .. gameLabel)
+end
