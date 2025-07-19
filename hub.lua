@@ -84,16 +84,16 @@ repeat task.wait() until gotKey
 
 -- ✅ 1. Game module config (CORRECTED PlaceIds & URLs)
 local Modules = {
-    [2753915549] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/blox_fruits.lua", -- Blox Fruits
-    [142823291] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/murder_mystery.lua", -- Murder Mystery 2
-    [126884695634066] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/grow_a_garden.lua", -- Grow a Garden!
-    [99567941238278] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/ink_game.lua", -- The Ink Game
-    [109983668079237] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_brainrot.lua" -- Steal a Brainrot
-    [70671905624144] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_baddie.lua", -- Steal a Baddie
-    [126509999114328] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/99_nights_in_forest.lua", -- 99 Nights in Forest
-    [4924922222] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/brookhaven.lua", -- Brookhaven
-    [6766156863] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/strongman_simulator.lua", -- Strongman Simulator
-    [192800] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/work_at_a_pizza_place.lua" -- Work at Pizza Place
+    [2753915549] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/blox_fruits.lua",
+    [142823291] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/murder_mystery.lua",
+    [126884695634066] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/grow_a_garden.lua",
+    [99567941238278] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/ink_game.lua",
+    [109983668079237] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_brainrot.lua",
+    [70671905624144] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_baddie.lua",
+    [126509999114328] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/99_nights_in_forest.lua",
+    [4924922222] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/brookhaven.lua",
+    [6766156863] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/strongman_simulator.lua",
+    [192800] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/work_at_a_pizza_place.lua"
 }
 
 -- fallback module
