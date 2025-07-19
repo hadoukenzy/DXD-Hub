@@ -82,22 +82,27 @@ KeyTab:CreateButton({
 -- Wait until correct key is entered
 repeat task.wait() until gotKey
 
--- 1. Game module config
+-- 1. Game module config (from GitHub repo)
 local Modules = {
-    [2753915549] = "https://gist.githubusercontent.com/hadoukenzy/3f70899df182d4f10d3fc6055b15f73c/raw/ce41700a4e9d248b23205c5a74b8b7feb9fe63a3/blox_fruits.lua", -- Blox Fruits
-    [1537690962] = "murder_mystery.lua", -- Murder Mystery 2
-    [126884695634066] = "https://gist.githubusercontent.com/hadoukenzy/c7e0e34391bfaa7d429ab65d0121495b/raw/055d368acf7f647c91baa5b60721889ead9ffd8f/grow_a_garden.lua", -- Grow A Garden!
-    [125009265613167] = "https://gist.githubusercontent.com/hadoukenzy/4792f688f6c7e12024216d1fcf4b0932/raw/a734552a7d904a240a66b81732525e4686022efa/ink_game.lua", -- Ink Game
-    [109983668079237] = "https://gist.githubusercontent.com/hadoukenzy/cf7214c4ef25dbcb9d8712f6d624bfd3/raw/669144202d145fd37a258838cefef14a34742a37/steal_a_brainrot.lua" -- Steal a Brainrot
+    [2753915549] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/blox_fruits.lua", -- Blox Fruits
+    [1537690962] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/murder_mystery.lua", -- Murder Mystery 2
+    [126884695634066] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/grow_a_garden.lua", -- Grow A Garden!
+    [125009265613167] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/ink_game.lua", -- Ink Game
+    [109983668079237] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_brainrot.lua" -- Steal a Brainrot
 }
-local UniversalModule = "universal.lua"
-local version = "1.3.7"
-local VersionURL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/version.txt"
 
--- Detect game
+-- universal fallback (если игра не найдена)
+local UniversalModule = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/universal.lua"
+
+-- версия хаба
+local version = "1.3.7"
+local VersionURL = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/version.txt"
+
+-- Detect current game
 local id = game.PlaceId
 local modURL = Modules[id] or UniversalModule
 
+-- Получение названия игры
 local gameName = "Unknown Game"
 local successInfo, info = pcall(function()
     return game:GetService("MarketplaceService"):GetProductInfo(id)
@@ -112,7 +117,7 @@ Rayfield:Notify({
     Duration = 6
 })
 
--- Module loader
+-- Модульный загрузчик
 local function LoadModule(url)
     local success, content = pcall(game.HttpGet, game, url, true)
     if success then
@@ -137,10 +142,10 @@ local function LoadModule(url)
     return false
 end
 
--- Load current module
+-- Загрузка текущего модуля
 LoadModule(modURL)
 
--- Version check
+-- Проверка на обновление
 local successVer, latestVer = pcall(function()
     return game:HttpGet(VersionURL, true)
 end)
@@ -152,7 +157,7 @@ if successVer and latestVer and latestVer:gsub("%s+", "") ~= version then
     })
 end
 
--- Final info tab
+-- Финальная вкладка с информацией
 local InfoTab = Window:CreateTab("ℹ️ Info")
 
 InfoTab:CreateLabel("Your current Game: " .. gameName)
