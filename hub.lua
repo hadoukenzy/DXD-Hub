@@ -1,23 +1,26 @@
--- ⬛ DXD HUB ⚡ 2025 — ВСТАВКА ГОТОВЫХ СКРИПТОВ + КЛЮЧ С GITHUB
+-- ⬛ DXD HUB ⚡ 2025 - FINAL VERSION W/ CLEAN KEY SYSTEM
 
--- КОНФИГ КЛЮЧА
+-- 0. KEY CONFIG
 local correctKeyURL = "https://gist.githubusercontent.com/hadoukenzy/33dbde55309ff802bb412012b170cb9c/raw/b09b8075a7846b04e52c5a89400d60e3870f0320/my-secret-lootlink-key"
 local lootlinkURL = "https://loot-link.com/s?y2uz8yCS"
 local correctKey = ""
 local gotKey = false
 
--- Получаем ключ с GitHub
+-- Fetch key
 local success, response = pcall(function()
     return game:HttpGet(correctKeyURL)
 end)
+
 if success and response then
     correctKey = response:match("^%s*(.-)%s*$")
 else
-    warn("❌ Не удалось загрузить ключ с GitHub")
+    warn("Failed to fetch key from GitHub")
 end
 
--- UI через Rayfield
+-- Load Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Create main window
 local Window = Rayfield:CreateWindow({
     Name = "DXD HUB ⚡ 2025",
     LoadingTitle = "Loading...",
@@ -29,8 +32,9 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Ключ-система
+-- Create Key System Tab
 local KeyTab = Window:CreateTab("🔐 Key System")
+
 KeyTab:CreateInput({
     Name = "Enter Your Key",
     PlaceholderText = "Paste your key here",
@@ -44,8 +48,15 @@ KeyTab:CreateInput({
                 Duration = 5
             })
             task.wait(1.5)
+            -- Remove key tab from UI
             KeyTab.TabFrame:Destroy()
             KeyTab:Destroy()
+            for i, v in pairs(Window.Tabs) do
+                if v == KeyTab then
+                    table.remove(Window.Tabs, i)
+                    break
+                end
+            end
         else
             Rayfield:Notify({
                 Title = "Invalid Key",
@@ -55,6 +66,7 @@ KeyTab:CreateInput({
         end
     end
 })
+
 KeyTab:CreateButton({
     Name = "📎 Get Key (via Loot-Link)",
     Callback = function()
@@ -67,53 +79,30 @@ KeyTab:CreateButton({
     end
 })
 
--- Ждём ввода ключа
+-- Wait until correct key is entered
 repeat task.wait() until gotKey
 
--- ВСТРОЕННЫЕ СКРИПТЫ
+-- ✅ 1. Game module config (CORRECTED PlaceIds & URLs)
 local Modules = {
-    [2753915549] = [[
-        local tab = Window:CreateTab("🍍 Blox Fruits")
-        tab:CreateLabel("Blox Fruits Loaded")
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/ThunderZ-05/HUB/main/TestKey')))()
-    ]],
-
-    [142823291] = [[
-        local tab = Window:CreateTab("🔪 MM2")
-        tab:CreateLabel("Murder Mystery 2 Loaded")
-        -- вставь сюда свой код
-    ]],
-
-    [5985232436] = [[
-        local tab = Window:CreateTab("🌱 Garden")
-        tab:CreateLabel("Grow a Garden Loaded")
-        -- вставь сюда свой код
-    ]],
-
-    [6186867282] = [[
-        local tab = Window:CreateTab("🖋️ Ink Game")
-        tab:CreateLabel("Ink Game Loaded")
-        -- вставь сюда свой код
-    ]],
-
-    [9872472334] = [[
-        local tab = Window:CreateTab("🧠 Brainrot")
-        tab:CreateLabel("Brainrot Loaded")
-        -- вставь сюда свой код
-    ]]
+    [2753915549] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/blox_fruits.lua", -- Blox Fruits
+    [142823291] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/murder_mystery.lua", -- Murder Mystery 2
+    [5985232436] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/grow_a_garden.lua", -- Grow a Garden!
+    [6186867282] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/ink_game.lua", -- The Ink Game
+    [9872472334] = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/steal_a_brainrot.lua" -- Steal a Brainrot
 }
 
--- универсальный скрипт
-local UniversalScript = [[
-    local tab = Window:CreateTab("🌍 Universal")
-    tab:CreateLabel("This game is not supported yet.")
-]]
+-- fallback module
+local UniversalModule = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/scripts/universal.lua"
 
--- Определяем игру
+-- versioning
+local version = "1.3.7"
+local VersionURL = "https://raw.githubusercontent.com/hadoukenzy/DXD-Hub/main/version.txt"
+
+-- Detect current game
 local id = game.PlaceId
-local scriptCode = Modules[id] or UniversalScript
+local modURL = Modules[id] or UniversalModule
 
--- Получаем имя игры
+-- Get game name
 local gameName = "Unknown Game"
 local successInfo, info = pcall(function()
     return game:GetService("MarketplaceService"):GetProductInfo(id)
@@ -124,46 +113,59 @@ end
 
 Rayfield:Notify({
     Title = "Game Detected",
-    Content = "Your game is: " .. gameName .. ". Loading script...",
+    Content = "Your game is: " .. gameName .. ". Loading appropriate script...",
     Duration = 6
 })
 
--- Загружаем скрипт
-local fn, err = loadstring(scriptCode)
-if fn then
-    local ok, result = pcall(fn)
-    if not ok then
+-- Module loader
+local function LoadModule(url)
+    local success, content = pcall(game.HttpGet, game, url, true)
+    if success then
+        local fn, err = loadstring(content)
+        if fn then
+            pcall(fn, Window)
+            return true
+        else
+            Rayfield:Notify({
+                Title = "Script Error",
+                Content = "Failed to compile module: " .. err,
+                Duration = 5
+            })
+        end
+    else
         Rayfield:Notify({
-            Title = "Script Error",
-            Content = tostring(result),
+            Title = "Download Error",
+            Content = "Failed to download module: " .. content,
             Duration = 5
         })
     end
-else
+    return false
+end
+
+-- Load current module
+LoadModule(modURL)
+
+-- Version check
+local successVer, latestVer = pcall(function()
+    return game:HttpGet(VersionURL, true)
+end)
+if successVer and latestVer and latestVer:gsub("%s+", "") ~= version then
     Rayfield:Notify({
-        Title = "Load Error",
-        Content = tostring(err),
-        Duration = 5
+        Title = "Update Available",
+        Content = "New version " .. latestVer .. " is available! Please restart the loader.",
+        Duration = 8
     })
 end
 
--- Инфо вкладка
+-- Info tab
 local InfoTab = Window:CreateTab("ℹ️ Info")
+
 InfoTab:CreateLabel("Your current Game: " .. gameName)
 InfoTab:CreateLabel("Script developers: enzy & dxrling")
 
 InfoTab:CreateButton({
-    Name = "Re-inject Current Script",
+    Name = "Re-inject Current Module",
     Callback = function()
-        local reload, err = loadstring(scriptCode)
-        if reload then
-            pcall(reload)
-        else
-            Rayfield:Notify({
-                Title = "Reload Error",
-                Content = tostring(err),
-                Duration = 5
-            })
-        end
+        LoadModule(modURL)
     end
 })
