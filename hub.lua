@@ -1,4 +1,4 @@
--- ⬛ DXD HUB ⚡ 2025 - FINAL VERSION W/ CLEAN KEY SYSTEM
+-- ⬛️ DXD HUB ⚡️ 2025 - FINAL VERSION W/ CLEAN KEY SYSTEM
 
 -- 0. KEY CONFIG
 local correctKeyURL = "https://gist.githubusercontent.com/hadoukenzy/33dbde55309ff802bb412012b170cb9c/raw/b09b8075a7846b04e52c5a89400d60e3870f0320/my-secret-lootlink-key"
@@ -22,7 +22,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- Create main window
 local Window = Rayfield:CreateWindow({
-    Name = "DXD HUB ⚡ 2025",
+    Name = "DXD HUB ⚡️ 2025",
     LoadingTitle = "Loading...",
     LoadingSubtitle = "by enzy & dxrling",
     ConfigurationSaving = {
