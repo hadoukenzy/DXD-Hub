@@ -161,6 +161,7 @@ end
 local InfoTab = Window:CreateTab("ℹ️ Info")
 
 InfoTab:CreateLabel("Your current Game: " .. gameName)
+InfoTab:CreateLabel("PlaceId: " .. tostring(id))
 InfoTab:CreateLabel("Script developers: enzy & dxrling")
 
 InfoTab:CreateButton({
